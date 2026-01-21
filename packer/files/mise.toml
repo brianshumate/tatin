@@ -1,0 +1,29 @@
+# Tatin Global Mise Configuration
+# This file defines the development tools installed in the Tatin sandbox
+# https://mise.jdx.dev/configuration.html
+
+[tools]
+# Python - latest stable 3.x
+python = "3"
+
+# Go - matches previous go_version variable (1.23.x)
+go = "1.23"
+
+# Node.js - LTS version (matches previous NodeSource setup)
+node = "lts"
+
+# Ruby - matches previous ruby_version variable (3.3.x)
+ruby = "3.3"
+
+# Bun - JavaScript runtime and toolkit
+bun = "latest"
+
+# Rust - systems programming language (new addition)
+rust = "latest"
+
+[settings]
+# Automatically install tools when entering a directory with a mise.toml
+not_found_auto_install = true
+
+# Don't prompt for confirmation
+yes = true
