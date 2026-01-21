@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bd --help:*)",
+      "Bash(bd help:*)",
+      "Bash(bd info:*)",
+      "Bash(bd init:*)",
+      "Bash(bd epic --help:*)",
+      "Bash(bd create --help:*)",
+      "Bash(bd create:*)",
+      "Bash(bd list:*)",
+      "Bash(bd update:*)",
+      "Bash(bd dep add:*)",
+      "Bash(bd sync:*)",
+      "Bash(bd stats:*)",
+      "Bash(bd ready:*)",
+      "Bash(bd close:*)",
+      "Bash(git add:*)",
+      "Bash(bd show:*)",
+      "Bash(tart:*)",
+      "Bash(vagrant plugin:*)",
+      "Bash(vagrant up:*)"
+    ]
+  }
+}

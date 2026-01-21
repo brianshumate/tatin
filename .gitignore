@@ -1,0 +1,258 @@
+# =============================================================================
+# Tatin Project .gitignore
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Vagrant
+# -----------------------------------------------------------------------------
+# Vagrant creates this directory to store machine state, SSH keys, and metadata
+.vagrant/
+
+# -----------------------------------------------------------------------------
+# Packer
+# -----------------------------------------------------------------------------
+# Packer output directories
+packer/output/
+packer/output-*/
+output/
+
+# Packer cache (downloaded ISOs, etc.)
+packer_cache/
+
+# Packer manifest files (generated after builds)
+packer-manifest.json
+manifest.json
+
+# Packer log files
+packer*.log
+*.packer.log
+
+# Packer crash logs
+crash.log
+
+# -----------------------------------------------------------------------------
+# Tart (macOS virtualization)
+# -----------------------------------------------------------------------------
+# VM disk images and state
+*.tart
+*.ipsw
+
+# Tart logs
+.tatin/tatin.log
+.tatin/*.log
+
+# -----------------------------------------------------------------------------
+# Beads (issue tracking)
+# -----------------------------------------------------------------------------
+# SQLite databases
+*.db
+*.db?*
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Daemon runtime files
+daemon.lock
+daemon.log
+daemon.pid
+bd.sock
+sync-state.json
+last-touched
+
+# Local version tracking (prevents upgrade notification spam after git ops)
+.local_version
+
+# Legacy database files
+db.sqlite
+bd.db
+
+# Worktree redirect file (contains relative path to main repo's .beads/)
+# Must not be committed as paths would be wrong in other clones
+redirect
+
+# Merge artifacts (temporary files from 3-way merge)
+beads.base.jsonl
+beads.base.meta.json
+beads.left.jsonl
+beads.left.meta.json
+beads.right.jsonl
+beads.right.meta.json
+
+# Sync state (local-only, per-machine)
+.sync.lock
+sync_base.jsonl
+
+# bv (beads viewer) local config and caches
+.bv/
+
+# NOTE: issues.jsonl and interactions.jsonl are intentionally tracked
+
+# -----------------------------------------------------------------------------
+# macOS
+# -----------------------------------------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Thumbnails
+Thumbs.db
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP shares
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# -----------------------------------------------------------------------------
+# Editors and IDEs
+# -----------------------------------------------------------------------------
+# VSCode
+.vscode/
+*.code-workspace
+
+# JetBrains IDEs
+.idea/
+*.iml
+
+# Vim
+*.swp
+*.swo
+*.swn
+*~
+.netrwhist
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# -----------------------------------------------------------------------------
+# Logs and runtime files
+# -----------------------------------------------------------------------------
+*.log
+logs/
+*.pid
+*.sock
+*.lock
+
+# Exception: keep specific lock files that should be tracked
+!yarn.lock
+!package-lock.json
+!Gemfile.lock
+
+# -----------------------------------------------------------------------------
+# Secrets and credentials
+# -----------------------------------------------------------------------------
+# SSH keys
+*.pem
+*.key
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+
+# Environment files with secrets
+.env
+.env.local
+.env.*.local
+*.env
+
+# API keys and tokens
+.secrets
+.credentials
+*.token
+
+# AWS credentials
+.aws/
+
+# -----------------------------------------------------------------------------
+# Build artifacts and dependencies
+# -----------------------------------------------------------------------------
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+venv/
+.venv/
+env/
+.env/
+
+# Go
+/vendor/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# -----------------------------------------------------------------------------
+# Temporary and cache files
+# -----------------------------------------------------------------------------
+*.tmp
+*.temp
+*.bak
+*.backup
+*.cache
+.cache/
+tmp/
+temp/
+
+# -----------------------------------------------------------------------------
+# Archives (usually shouldn't be in repos)
+# -----------------------------------------------------------------------------
+*.tar
+*.tar.gz
+*.tgz
+*.tar.bz2
+*.tar.xz
+*.zip
+*.rar
+*.7z
+*.iso
+*.dmg
+
+# -----------------------------------------------------------------------------
+# Disk images and large binary files
+# -----------------------------------------------------------------------------
+*.img
+*.qcow2
+*.vmdk
+*.vdi
+*.vhd
+*.raw
+
+# -----------------------------------------------------------------------------
+# Agent tool configuration files
+# -----------------------------------------------------------------------------
+crush.json
+opencode.json

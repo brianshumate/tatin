@@ -1,0 +1,17 @@
+{
+  "providers": {
+    "ollama": {
+      "name": "Ollama",
+      "base_url": "http://127.0.0.1:11434/v1/",
+      "type": "openai-compat",
+      "models": [
+        {
+          "name": "Ministral 3 3b",
+          "id": "ministral-3:3b",
+          "context_window": 256000,
+          "default_max_tokens": 20000
+        }
+      ]
+    }
+  }
+}
