@@ -75,18 +75,29 @@ Tatin combines several nice technologies towards the goal of virtual machine bas
 
 In addition to covering the prerequisites, you must build the base VM image with Packer before proceeding.
 
-```shell
-cd packer
+1. Change into the packer directory.
 
-# Initialize Packer plugins
-packer init .
+    ```shell
+    cd packer
+    ```
 
-# Validate the template
-packer validate .
+1. Initialize Packer plugins
 
-# Build the image
-packer build .
-```
+    ```shell
+    packer init .
+    ```
+
+1. Validate the template
+
+    ```shell
+    packer validate .
+    ```
+
+1. Build the image
+
+    ```shell
+    packer build .
+    ```
 
 This creates a `tatin` image in your local Tart registry with all development tools and AI agents pre-installed. The build takes approximately 10-15 minutes depending on network speed.
 
