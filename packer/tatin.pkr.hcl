@@ -25,7 +25,7 @@ source "tart-cli" "tatin" {
 build {
   sources = ["source.tart-cli.tatin"]
 
-  # Base system packages
+  # Base system packages (build dependencies for mise-compiled languages)
   provisioner "shell" {
     script = "${path.root}/scripts/base-system.sh"
     environment_vars = [
@@ -33,44 +33,16 @@ build {
     ]
   }
 
-  # Python 3
-  provisioner "shell" {
-    script = "${path.root}/scripts/python.sh"
-    environment_vars = [
-      "DEBIAN_FRONTEND=noninteractive"
-    ]
+  # Copy mise configuration file to VM
+  provisioner "file" {
+    source      = "${path.root}/files/mise.toml"
+    destination = "/tmp/mise.toml"
   }
 
-  # Go
+  # Mise: Install mise and all development tools (Python, Go, Node, Ruby, Bun, Rust)
+  # Replaces individual python.sh, golang.sh, nodejs.sh, ruby.sh, bun.sh scripts
   provisioner "shell" {
-    script = "${path.root}/scripts/golang.sh"
-    environment_vars = [
-      "GO_VERSION=${var.go_version}"
-    ]
-  }
-
-  # Node.js LTS (needed before Bun for npm fallback)
-  provisioner "shell" {
-    script = "${path.root}/scripts/nodejs.sh"
-    environment_vars = [
-      "DEBIAN_FRONTEND=noninteractive"
-    ]
-  }
-
-  # Ruby via rbenv (user-space install)
-  provisioner "shell" {
-    script          = "${path.root}/scripts/ruby.sh"
-    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.ssh_username} bash '{{ .Path }}'"
-    environment_vars = [
-      "DEBIAN_FRONTEND=noninteractive",
-      "HOME=/home/${var.ssh_username}",
-      "RUBY_VERSION=${var.ruby_version}"
-    ]
-  }
-
-  # Bun (user-space install)
-  provisioner "shell" {
-    script          = "${path.root}/scripts/bun.sh"
+    script          = "${path.root}/scripts/mise.sh"
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.ssh_username} bash '{{ .Path }}'"
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
@@ -98,14 +70,13 @@ build {
     ]
   }
 
-  # Crush (user-space install via npm)
+  # Crush (user-space install via npm - uses mise's node/npm)
   provisioner "shell" {
     script          = "${path.root}/scripts/crush.sh"
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.ssh_username} bash '{{ .Path }}'"
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
-      "HOME=/home/${var.ssh_username}",
-      "PATH=/home/${var.ssh_username}/.bun/bin:/usr/local/go/bin:/usr/bin:/bin"
+      "HOME=/home/${var.ssh_username}"
     ]
   }
 
