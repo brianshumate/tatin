@@ -29,7 +29,7 @@ sudo -E apt-get install -y -qq \
   htop \
   tree
 
-echo "○ Installing Ruby build dependencies..."
+echo "○ Installing language build dependencies for mise..."
 sudo -E apt-get install -y -qq \
   libssl-dev \
   libreadline-dev \

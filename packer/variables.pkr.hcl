@@ -43,15 +43,3 @@ variable "ssh_password" {
   sensitive   = true
   description = "SSH password for provisioning"
 }
-
-variable "go_version" {
-  type        = string
-  default     = "1.23.5"
-  description = "Go version to install"
-}
-
-variable "ruby_version" {
-  type        = string
-  default     = "3.3.6"
-  description = "Ruby version to install via rbenv"
-}
