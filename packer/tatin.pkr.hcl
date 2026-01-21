@@ -57,6 +57,17 @@ build {
     ]
   }
 
+  # Ruby via rbenv (user-space install)
+  provisioner "shell" {
+    script          = "${path.root}/scripts/ruby.sh"
+    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.ssh_username} bash '{{ .Path }}'"
+    environment_vars = [
+      "DEBIAN_FRONTEND=noninteractive",
+      "HOME=/home/${var.ssh_username}",
+      "RUBY_VERSION=${var.ruby_version}"
+    ]
+  }
+
   # Bun (user-space install)
   provisioner "shell" {
     script          = "${path.root}/scripts/bun.sh"

@@ -29,4 +29,12 @@ sudo -E apt-get install -y -qq \
   htop \
   tree
 
+echo "○ Installing Ruby build dependencies..."
+sudo -E apt-get install -y -qq \
+  libssl-dev \
+  libreadline-dev \
+  zlib1g-dev \
+  libyaml-dev \
+  libffi-dev
+
 echo "● Base system ready"
