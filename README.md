@@ -25,16 +25,20 @@ Tatin combines several nice technologies towards the goal of virtual machine bas
 - [OpenCode](https://opencode.ai/) - open source terminal agent
   - Example configuration allows all permissions
 - [Crush](https://github.com/charmbracelet/crush) - open source terminal agent
-- Tool configuration examples
+- Tool configuration examples in `work/` directory
 
 ### Development tools
 
+- [mise](https://mise.jdx.dev/) - unified tool version manager
 - build-essential (gcc, make, etc.)
-- git, curl, wget, jq
-- Python 3 with pip and venv
+- git, curl, wget, jq, unzip
+- Python 3 (latest)
 - Go 1.23
-- Bun and Node.js LTS
-- tmux, vim
+- Node.js LTS
+- Ruby 3.3
+- Bun (latest)
+- Rust (latest)
+- tmux, zsh, vim, htop, tree
 
 ### Base Environment
 
@@ -73,6 +77,8 @@ Tatin combines several nice technologies towards the goal of virtual machine bas
 
 ### Build the base image
 
+> **NOTE**: This is a long-running process that takes 10-15 minutes depending on network speed.
+
 In addition to covering the prerequisites, you must build the base VM image with Packer before proceeding.
 
 1. Change into the packer directory.
@@ -81,25 +87,25 @@ In addition to covering the prerequisites, you must build the base VM image with
     cd packer
     ```
 
-1. Initialize Packer plugins
+1. Initialize Packer plugins.
 
     ```shell
     packer init .
     ```
 
-1. Validate the template
+1. Validate the template.
 
     ```shell
     packer validate .
     ```
 
-1. Build the image
+1. Build the image.
 
     ```shell
     packer build .
     ```
 
-This creates a `tatin` image in your local Tart registry with all development tools and AI agents pre-installed. The build takes approximately 10-15 minutes depending on network speed.
+This creates a `tatin` image in your local Tart registry with all development tools and AI agents pre-installed.
 
 Verify image creation:
 
@@ -127,27 +133,33 @@ tart list
     cd packer && packer init . && packer build . && cd ..
     ```
 
-1. Start the sandbox
+1. Start the sandbox.
 
     ```shell
     ./scripts/tatin.sh up
     ```
 
-1. Connect to the sandbox
+1. Connect to the sandbox.
 
     ```shell
+    ./scripts/tatin.sh ssh
+    # or
     vagrant ssh
     ```
 
-1. Stop VM.
+1. When done, stop the VM.
 
     ```shell
+    ./scripts/tatin.sh down
+    # or
     vagrant halt
     ```
 
-2. Delete VM.
+1. To completely remove the VM.
 
     ```shell
+    ./scripts/tatin.sh delete
+    # or
     vagrant destroy -f
     ```
 
@@ -186,18 +198,20 @@ tatin/
 ├── packer/
 │   ├── tatin.pkr.hcl     # Packer template for base image
 │   ├── variables.pkr.hcl # Build variables
+│   ├── files/
+│   │   └── mise.toml     # Tool version configuration
 │   └── scripts/          # Provisioning scripts
 │       ├── base-system.sh
-│       ├── python.sh
-│       ├── golang.sh
-│       ├── nodejs.sh
-│       ├── bun.sh
+│       ├── mise.sh
 │       ├── claude-code.sh
 │       ├── opencode.sh
 │       ├── crush.sh
 │       └── finalize.sh
 ├── scripts/
 │   └── tatin.sh          # Lifecycle management CLI
+├── work/                 # Shared folder (synced to VM)
+│   ├── example.opencode.json
+│   └── example.crush.json
 └── .tatin/
     └── tatin.log         # Runtime logs (created at runtime)
 ```
@@ -207,14 +221,11 @@ tatin/
 The Packer build runs these provisioning stages to create the base image:
 
 1. **base-system** - Core packages, build tools, shell utilities
-2. **python** - Python 3 with pip and venv
-3. **golang** - Go 1.23 toolchain
-4. **nodejs** - Node.js LTS
-5. **bun** - Bun JavaScript runtime
-6. **claude-code** - Claude Code CLI
-7. **opencode** - OpenCode CLI
-8. **crush** - Crush CLI
-9. **finalize** - Shell configuration, cleanup
+2. **mise** - Installs [mise](https://mise.jdx.dev/) and all language runtimes (Python, Go, Node.js, Ruby, Bun, Rust)
+3. **claude-code** - Claude Code CLI
+4. **opencode** - OpenCode CLI
+5. **crush** - Crush CLI (via npm)
+6. **finalize** - Shell configuration, cleanup
 
 ## Configuration
 
@@ -257,18 +268,37 @@ claude auth login
 # or set ANTHROPIC_API_KEY environment variable
 ```
 
+Run Claude Code:
+```shell
+claude
+```
+
 ### OpenCode
 
+Configure using the example in the shared `work/` directory:
+
+```shell
+cp ~/work/example.opencode.json ~/.config/opencode/config.json
+# Edit config.json with your model server details
+```
+
+Run OpenCode:
 ```shell
 opencode
-# Follow prompts to configure API provider
 ```
 
 ### Crush
 
+Configure using the example in the shared `work/` directory:
+
+```shell
+cp ~/work/example.crush.json ~/.config/crush/config.json
+# Edit config.json with your model server details
+```
+
+Run Crush:
 ```shell
 crush
-# Follow prompts to configure API provider
 ```
 
 ## Troubleshooting
