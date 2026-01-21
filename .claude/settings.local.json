@@ -19,7 +19,10 @@
       "Bash(bd show:*)",
       "Bash(tart:*)",
       "Bash(vagrant plugin:*)",
-      "Bash(vagrant up:*)"
+      "Bash(vagrant up:*)",
+      "Bash(packer validate:*)",
+      "Bash(git commit:*)",
+      "Bash(git push)"
     ]
   }
 }
