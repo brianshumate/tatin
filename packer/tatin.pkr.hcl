@@ -16,6 +16,7 @@ source "tart-cli" "tatin" {
   cpu_count      = var.cpu_count
   memory_gb      = var.memory_gb
   disk_size_gb   = var.disk_size_gb
+  headless       = true
   ssh_username   = var.ssh_username
   ssh_password   = var.ssh_password
   ssh_timeout    = "120s"
