@@ -2,8 +2,11 @@
 # Python 3 provisioning for Tatin
 set -euo pipefail
 
+# Ensure DEBIAN_FRONTEND is exported for sudo -E
+export DEBIAN_FRONTEND=${DEBIAN_FRONTEND:-noninteractive}
+
 echo "○ Installing Python 3..."
-sudo apt-get install -y -qq \
+sudo -E apt-get install -y -qq \
   python3 \
   python3-pip \
   python3-venv \

@@ -2,6 +2,9 @@
 # Final cleanup and configuration for Tatin
 set -euo pipefail
 
+# Ensure DEBIAN_FRONTEND is exported for sudo -E
+export DEBIAN_FRONTEND=${DEBIAN_FRONTEND:-noninteractive}
+
 SSH_USERNAME="${SSH_USERNAME:-admin}"
 
 echo "○ Configuring shell environment..."
@@ -14,7 +17,7 @@ fi
 echo "○ Cleaning up..."
 
 # Clean apt cache to reduce image size
-sudo apt-get clean
+sudo -E apt-get clean
 sudo rm -rf /var/lib/apt/lists/*
 
 # Remove temporary files

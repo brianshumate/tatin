@@ -101,6 +101,7 @@ build {
   provisioner "shell" {
     script = "${path.root}/scripts/finalize.sh"
     environment_vars = [
+      "DEBIAN_FRONTEND=noninteractive",
       "SSH_USERNAME=${var.ssh_username}"
     ]
   }

@@ -2,11 +2,14 @@
 # Base system provisioning for Tatin
 set -euo pipefail
 
+# Ensure DEBIAN_FRONTEND is exported for sudo -E
+export DEBIAN_FRONTEND=${DEBIAN_FRONTEND:-noninteractive}
+
 echo "○ Updating package lists..."
-sudo apt-get update -qq
+sudo -E apt-get update -qq
 
 echo "○ Installing build-essential and core tools..."
-sudo apt-get install -y -qq \
+sudo -E apt-get install -y -qq \
   build-essential \
   git \
   curl \
@@ -19,7 +22,7 @@ sudo apt-get install -y -qq \
   lsb-release
 
 echo "○ Installing shell tools..."
-sudo apt-get install -y -qq \
+sudo -E apt-get install -y -qq \
   tmux \
   zsh \
   vim \
