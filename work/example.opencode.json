@@ -3,9 +3,9 @@
   "provider": {
     "ollama": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "Ollama (Basquiat)",
+      "name": "Ollama (Local)",
       "options": {
-        "baseURL": "http://10.0.42.48:11434/v1"
+        "baseURL": "http://192.168.64.1:11434/v1"
       },
       "models": {
         "ministral-3:3b": {
