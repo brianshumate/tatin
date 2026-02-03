@@ -126,17 +126,28 @@ tart list
     vagrant ssh
     ```
 
-1. When done, stop the VM.
+1. When done, you can shut the system down.
+
+    ```shell
+    sudo shutdown -h now
+    ```
+
+    or
+
+1. stop the VM.
 
     ```shell
     vagrant halt
     ```
 
-1. To completely remove the VM.
+1. Completely remove the VM to clean up, free up disk space, or start over.
 
     ```shell
     vagrant destroy -f
     ```
+
+> [!IMPORTANT]
+> Don't forget your content in the `work` folder.
 
 ## Usage
 
