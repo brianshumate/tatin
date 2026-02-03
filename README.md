@@ -8,7 +8,7 @@ The project combines [Tart](https://tart.run/) virtualization with [Vagrant](htt
 
 ## Why
 
-- LLM agents with tool calling abilities are potentially dangerous at all times, and cannot be trusted to cohabitate with humans in the same computing environment. You put the integrity of your data and system at risk whenever you run an agent tool in your primary computing environment.
+- LLM agents with tool calling abilities are potentially dangerous at all times, and cannot be trusted to coexist with humans in the same computing environment. You put the integrity of your data and system at risk whenever you run an agent tool in your primary computing environment.
 - Tatin provides a safe, contained space for AI agents to operate with sudo access, and minimizes the blast radius of any potential damage an agent could cause.
 - You can run your agent with all permission checks switched off so that the agent can operate for extended periods without interruption.
 
@@ -38,7 +38,7 @@ Tatin combines several nice technologies towards the goal of virtual machine bas
 - Node.js
 - Ruby
 - Rust
-- beads, curl, git, htop, jq, qmd, tmux, tree, unzip, vim, wget, zsh  
+- beads, curl, git, htop, jq, qmd, tmux, tree, unzip, vim, wget, zsh
 
 ### Base Environment
 
@@ -77,35 +77,16 @@ Tatin combines several nice technologies towards the goal of virtual machine bas
 
 ### Build the base image
 
-> **NOTE**: This is a long-running process that takes 10-15 minutes depending on network speed.
+> [!NOTE]
+> This is a long-running process that takes 10-15 minutes.
 
 In addition to covering the prerequisites, you must build the base VM image with Packer before proceeding.
 
-1. Change into the packer directory.
+```shell
+packer init packer/ && packer build packer/
+```
 
-    ```shell
-    cd packer
-    ```
-
-1. Initialize Packer plugins.
-
-    ```shell
-    packer init .
-    ```
-
-1. Validate the template.
-
-    ```shell
-    packer validate .
-    ```
-
-1. Build the image.
-
-    ```shell
-    packer build .
-    ```
-
-This creates a `tatin` image in your local Tart registry with all development tools and AI agents pre-installed.
+Packer builds a `tatin` image in your local Tart registry with all development tools and AI agents pre-installed.
 
 Verify image creation:
 
@@ -136,50 +117,32 @@ tart list
 1. Start the sandbox.
 
     ```shell
-    ./scripts/tatin.sh up
+    vagrant up
     ```
 
 1. Connect to the sandbox.
 
     ```shell
-    ./scripts/tatin.sh ssh
-    # or
     vagrant ssh
     ```
 
 1. When done, stop the VM.
 
     ```shell
-    ./scripts/tatin.sh down
-    # or
     vagrant halt
     ```
 
 1. To completely remove the VM.
 
     ```shell
-    ./scripts/tatin.sh delete
-    # or
     vagrant destroy -f
     ```
 
-
 ## Usage
-
-The `tatin` script provides a clean interface for VM management:
-
-```shell
-tatin up       # Start and provision the VM
-tatin down     # Stop the VM (preserves state)
-tatin delete   # Destroy the VM completely
-tatin status   # Show current VM status
-tatin ssh      # Connect to the running VM
-tatin logs     # View provisioning logs
-```
 
 ### Direct Vagrant Commands
 
-You can also use Vagrant directly:
+You can use Vagrant to manage the VM life-cycle.
 
 ```shell
 vagrant up              # Start VM
@@ -190,7 +153,7 @@ vagrant provision       # Re-run provisioning
 vagrant status          # Check status
 ```
 
-### Provisioning stages
+## Provisioning stages
 
 The Packer build runs these provisioning stages to create the base image:
 
