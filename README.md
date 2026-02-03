@@ -20,6 +20,7 @@ Tatin combines several nice technologies towards the goal of virtual machine bas
 
 ### AI agent tools
 
+- [Pi](https://shittycodingagent.ai/)
 - [Claude Code](https://claude.ai/code) - Anthropic's terminal agent
   - Configured to dangerously skip permissions
 - [OpenCode](https://opencode.ai/) - open source terminal agent
