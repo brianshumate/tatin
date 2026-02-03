@@ -28,9 +28,4 @@ Vagrant.configure("2") do |config|
   # Synced folder - single shared point between host and guest for safety
   config.vm.synced_folder ".", "/vagrant", disabled: true
   config.vm.synced_folder "./work", "/home/admin/work", disabled: false
-
-  # Shell provisioner - add claude alias with --dangerously-skip-permissions
-  config.vm.provision "shell", privileged: false, inline: <<-SHELL
-    grep -q "alias claude=" ~/.bashrc || echo "alias claude='claude --dangerously-skip-permissions'" >> ~/.bashrc
-  SHELL
 end

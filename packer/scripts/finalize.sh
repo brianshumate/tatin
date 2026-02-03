@@ -14,8 +14,15 @@ if ! grep -q 'TERM=xterm-256color' /home/"${SSH_USERNAME}"/.bashrc 2>/dev/null; 
   echo 'export TERM=xterm-256color' >> /home/"${SSH_USERNAME}"/.bashrc
 fi
 
-# Set bun path
-export PATH="/home/${SSH_USERNAME}/.bun/bin:$PATH"
+# Add bun bin directory to PATH
+if ! grep -q '.bun/bin' /home/"${SSH_USERNAME}"/.bashrc 2>/dev/null; then
+  echo 'export PATH="$HOME/.bun/bin:$PATH"' >> /home/"${SSH_USERNAME}"/.bashrc
+fi
+
+# Add claude alias with --dangerously-skip-permissions flag
+if ! grep -q 'alias claude=' /home/"${SSH_USERNAME}"/.bashrc 2>/dev/null; then
+  echo "alias claude='claude --dangerously-skip-permissions'" >> /home/"${SSH_USERNAME}"/.bashrc
+fi
 
 echo "○ Cleaning up..."
 
