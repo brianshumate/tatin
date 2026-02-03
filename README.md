@@ -16,7 +16,8 @@ The project combines [Tart](https://tart.run/) virtualization with [Vagrant](htt
 
 Tatin combines several nice technologies towards the goal of virtual machine based sandboxes using Apple native virtualization with an operating system image that ships with a rich development environment for multiple languages along with a selection of popular AI agent tools.
 
-> **Note:** Tatin does not provide any model inference servers. You must run your own inference server, like [Ollama](https://ollama.com/), [vLLM](https://docs.vllm.ai/en/latest/), [LM Studio](https://lmstudio.ai/), and configure the agent tools in Tatin to use the server.
+> [!NOTE]
+> Tatin does not provide any model inference servers. You must run your own inference server, like [Ollama](https://ollama.com/), [vLLM](https://docs.vllm.ai/en/latest/), [LM Studio](https://lmstudio.ai/), and configure the agent tools in Tatin to use the server.
 
 ### AI agent tools
 
