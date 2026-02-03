@@ -49,9 +49,10 @@ build {
     ]
   }
 
-  # Pi (user-space install via bun)
+  # Agent tools: Claude Code + OpenCode (parallel installation)
+  # These only depend on curl (installed by base-system.sh) and can run in parallel internally
   provisioner "shell" {
-    script          = "${path.root}/scripts/pi.sh"
+    script          = "${path.root}/scripts/agent-tools.sh"
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.ssh_username} bash '{{ .Path }}'"
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
@@ -59,39 +60,10 @@ build {
     ]
   }
 
-  # Claude Code (user-space install)
+  # Bun-based tools: Pi + Crush + qmd (parallel installation)
+  # These depend on mise-managed bun and can run in parallel internally
   provisioner "shell" {
-    script          = "${path.root}/scripts/claude-code.sh"
-    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.ssh_username} bash '{{ .Path }}'"
-    environment_vars = [
-      "DEBIAN_FRONTEND=noninteractive",
-      "HOME=/home/${var.ssh_username}"
-    ]
-  }
-
-  # OpenCode (user-space install)
-  provisioner "shell" {
-    script          = "${path.root}/scripts/opencode.sh"
-    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.ssh_username} bash '{{ .Path }}'"
-    environment_vars = [
-      "DEBIAN_FRONTEND=noninteractive",
-      "HOME=/home/${var.ssh_username}"
-    ]
-  }
-
-  # Crush (user-space install via bun)
-  provisioner "shell" {
-    script          = "${path.root}/scripts/crush.sh"
-    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.ssh_username} bash '{{ .Path }}'"
-    environment_vars = [
-      "DEBIAN_FRONTEND=noninteractive",
-      "HOME=/home/${var.ssh_username}"
-    ]
-  }
-
-  # qmd (user-space install via curl)
-  provisioner "shell" {
-    script          = "${path.root}/scripts/qmd.sh"
+    script          = "${path.root}/scripts/bun-tools.sh"
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.ssh_username} bash '{{ .Path }}'"
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",

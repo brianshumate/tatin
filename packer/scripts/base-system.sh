@@ -8,7 +8,7 @@ export DEBIAN_FRONTEND=${DEBIAN_FRONTEND:-noninteractive}
 echo "○ Updating package lists..."
 sudo -E apt-get update -qq
 
-echo "○ Installing build-essential and core tools..."
+echo "○ Installing all system packages..."
 sudo -E apt-get install -y -qq \
   build-essential \
   git \
@@ -19,18 +19,12 @@ sudo -E apt-get install -y -qq \
   ca-certificates \
   gnupg \
   locales-all \
-  lsb-release
-
-echo "○ Installing shell tools..."
-sudo -E apt-get install -y -qq \
+  lsb-release \
   tmux \
   zsh \
   vim \
   htop \
-  tree
-
-echo "○ Installing language build dependencies for mise..."
-sudo -E apt-get install -y -qq \
+  tree \
   libssl-dev \
   libreadline-dev \
   zlib1g-dev \
