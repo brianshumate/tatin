@@ -9,12 +9,11 @@ echo "○ Installing Crush..."
 # Ensure mise is in PATH for npm post-install hooks that may call 'mise reshim'
 export PATH="$HOME/.local/bin:$PATH"
 
-# Install via mise's npm (uses registry integrity verification)
-# npm verifies package checksums via package-lock.json
+# Install via mise's bun
 echo "  ◐ Installing @charmland/crush from npm registry"
 
 # Use mise exec to run npm with the mise-managed Node.js
-$MISE_BIN exec -- npm install -g @charmland/crush
+$MISE_BIN exec -- bun install -g @charmland/crush
 
 # Verify installation using mise exec
 if $MISE_BIN exec -- which crush &> /dev/null; then

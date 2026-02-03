@@ -2,13 +2,13 @@
 
 > "_Tatin is a classic French upside-down tart with caramelized apples baked under a pastry crust_."
 
-Tatin is a VM sandbox for large running potentially dangerous language model agent workflows on Apple Silicon Macs.
+Tatin is a VM sandbox for running potentially dangerous large language model agent workflows on Apple Silicon Macs.
 
 The project combines [Tart](https://tart.run/) virtualization with [Vagrant](https://www.vagrantup.com/) through the [vagrant-tart](https://github.com/letiemble/vagrant-tart) plugin to create a full development environment where AI agents can operate with sudo access in a safe, contained space.
 
 ## Why
 
-- LLM agents with tool calling abilities are potentially dangerous at all times, and cannot be trusted to cohabitate with humans in the same computing environment. You put the integrity of your data and system at risk whenever you raw dog an agent tool in your primary computing environment.
+- LLM agents with tool calling abilities are potentially dangerous at all times, and cannot be trusted to cohabitate with humans in the same computing environment. You put the integrity of your data and system at risk whenever you run an agent tool in your primary computing environment.
 - Tatin provides a safe, contained space for AI agents to operate with sudo access, and minimizes the blast radius of any potential damage an agent could cause.
 - You can run your agent with all permission checks switched off so that the agent can operate for extended periods without interruption.
 
@@ -31,14 +31,13 @@ Tatin combines several nice technologies towards the goal of virtual machine bas
 
 - [mise](https://mise.jdx.dev/) - unified tool version manager
 - build-essential (gcc, make, etc.)
-- git, curl, wget, jq, unzip
-- Python 3 (latest)
-- Go 1.23
-- Node.js LTS
-- Ruby 3.3
-- Bun (latest)
-- Rust (latest)
-- tmux, zsh, vim, htop, tree
+- Bun
+- Go
+- Python
+- Node.js
+- Ruby
+- Rust
+- beads, curl, git, htop, jq, qmd, tmux, tree, unzip, vim, wget, zsh  
 
 ### Base Environment
 
@@ -130,7 +129,7 @@ tart list
 1. Build the base image (one-time setup).
 
     ```shell
-    cd packer && packer init . && packer build . && cd ..
+    packer init packer/ && packer build packer/
     ```
 
 1. Start the sandbox.
@@ -190,33 +189,7 @@ vagrant provision       # Re-run provisioning
 vagrant status          # Check status
 ```
 
-## Architecture
-
-```
-tatin/
-├── Vagrantfile           # VM configuration (uses pre-built image)
-├── packer/
-│   ├── tatin.pkr.hcl     # Packer template for base image
-│   ├── variables.pkr.hcl # Build variables
-│   ├── files/
-│   │   └── mise.toml     # Tool version configuration
-│   └── scripts/          # Provisioning scripts
-│       ├── base-system.sh
-│       ├── mise.sh
-│       ├── claude-code.sh
-│       ├── opencode.sh
-│       ├── crush.sh
-│       └── finalize.sh
-├── scripts/
-│   └── tatin.sh          # Lifecycle management CLI
-├── work/                 # Shared folder (synced to VM)
-│   ├── example.opencode.json
-│   └── example.crush.json
-└── .tatin/
-    └── tatin.log         # Runtime logs (created at runtime)
-```
-
-### Provisioning Stages
+### Provisioning stages
 
 The Packer build runs these provisioning stages to create the base image:
 
@@ -261,7 +234,17 @@ Default credentials (Debian image defaults):
 
 Once connected to the sandbox, each tool requires some configuration:
 
+### Pi
+
+Start `pi`, and login:
+
+```shell
+/login
+```
+
 ### Claude Code
+
+Authenticate with Claude Code:
 
 ```shell
 claude auth login

@@ -40,9 +40,18 @@ build {
   }
 
   # Mise: Install mise and all development tools (Python, Go, Node, Ruby, Bun, Rust)
-  # Replaces individual python.sh, golang.sh, nodejs.sh, ruby.sh, bun.sh scripts
   provisioner "shell" {
     script          = "${path.root}/scripts/mise.sh"
+    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.ssh_username} bash '{{ .Path }}'"
+    environment_vars = [
+      "DEBIAN_FRONTEND=noninteractive",
+      "HOME=/home/${var.ssh_username}"
+    ]
+  }
+
+  # Pi (user-space install via bun)
+  provisioner "shell" {
+    script          = "${path.root}/scripts/pi.sh"
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.ssh_username} bash '{{ .Path }}'"
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
@@ -70,9 +79,19 @@ build {
     ]
   }
 
-  # Crush (user-space install via npm - uses mise's node/npm)
+  # Crush (user-space install via bun)
   provisioner "shell" {
     script          = "${path.root}/scripts/crush.sh"
+    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.ssh_username} bash '{{ .Path }}'"
+    environment_vars = [
+      "DEBIAN_FRONTEND=noninteractive",
+      "HOME=/home/${var.ssh_username}"
+    ]
+  }
+
+  # qmd (user-space install via curl)
+  provisioner "shell" {
+    script          = "${path.root}/scripts/qmd.sh"
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.ssh_username} bash '{{ .Path }}'"
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",

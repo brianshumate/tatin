@@ -14,6 +14,9 @@ if ! grep -q 'TERM=xterm-256color' /home/"${SSH_USERNAME}"/.bashrc 2>/dev/null; 
   echo 'export TERM=xterm-256color' >> /home/"${SSH_USERNAME}"/.bashrc
 fi
 
+# Set bun path
+export PATH="/home/${SSH_USERNAME}/.bun/bin:$PATH"
+
 echo "○ Cleaning up..."
 
 # Clean apt cache to reduce image size
