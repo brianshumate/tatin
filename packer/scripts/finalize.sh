@@ -6,22 +6,34 @@ set -euo pipefail
 export DEBIAN_FRONTEND=${DEBIAN_FRONTEND:-noninteractive}
 
 SSH_USERNAME="${SSH_USERNAME:-admin}"
+BASHRC="/home/${SSH_USERNAME}/.bashrc"
 
 echo "○ Configuring shell environment..."
 
 # Set TERM for admin user
-if ! grep -q 'TERM=xterm-256color' /home/"${SSH_USERNAME}"/.bashrc 2>/dev/null; then
-  echo 'export TERM=xterm-256color' >> /home/"${SSH_USERNAME}"/.bashrc
+if ! grep -q 'TERM=xterm-256color' "$BASHRC" 2>/dev/null; then
+  echo 'export TERM=xterm-256color' >> "$BASHRC"
 fi
 
-# Add bun bin directory to PATH
-if ! grep -q '.bun/bin' /home/"${SSH_USERNAME}"/.bashrc 2>/dev/null; then
-  echo 'export PATH="$HOME/.bun/bin:$PATH"' >> /home/"${SSH_USERNAME}"/.bashrc
+# Add mise shell activation for global tool access
+if ! grep -q 'mise activate' "$BASHRC" 2>/dev/null; then
+  echo '' >> "$BASHRC"
+  echo '# Mise (mise-en-place) shell integration for global tool access' >> "$BASHRC"
+  echo 'eval "$(~/.local/bin/mise activate bash)"' >> "$BASHRC"
 fi
+
+# Add mise bash completions
+if ! grep -q 'mise completions' "$BASHRC" 2>/dev/null; then
+  echo '# Mise bash completions' >> "$BASHRC"
+  echo 'eval "$(mise completion bash)"' >> "$BASHRC"
+fi
+
+# Remove redundant bun PATH addition (mise handles this)
+sed -i '/\.bun\/bin/d' "$BASHRC" 2>/dev/null || true
 
 # Add claude alias with --dangerously-skip-permissions flag
-if ! grep -q 'alias claude=' /home/"${SSH_USERNAME}"/.bashrc 2>/dev/null; then
-  echo "alias claude='claude --dangerously-skip-permissions'" >> /home/"${SSH_USERNAME}"/.bashrc
+if ! grep -q 'alias claude=' "$BASHRC" 2>/dev/null; then
+  echo "alias claude='claude --dangerously-skip-permissions'" >> "$BASHRC"
 fi
 
 echo "○ Cleaning up..."

@@ -19,6 +19,15 @@ fi
 
 echo "● mise $($MISE_BIN --version) installed"
 
+# Add mise shell activation to .bashrc for global tool access
+BASHRC="$HOME/.bashrc"
+if ! grep -q 'mise activate' "$BASHRC" 2>/dev/null; then
+  echo '' >> "$BASHRC"
+  echo '# Mise (mise-en-place) shell integration for global tool access' >> "$BASHRC"
+  echo 'eval "$(~/.local/bin/mise activate bash)"' >> "$BASHRC"
+  echo 'eval "$(mise completion bash)"' >> "$BASHRC"
+fi
+
 # Create global config directory
 mkdir -p ~/.config/mise
 
