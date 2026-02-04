@@ -218,10 +218,17 @@ Commands:
   logs     View provisioning logs
   help     Show this help message
 
+Environment Variables (override VM resources):
+  TATIN_CPUS     Number of CPUs (default: 4)
+  TATIN_MEMORY   RAM in MB (default: 8192)
+  TATIN_DISK     Disk size in GB (default: 20)
+
 Examples:
-  tatin up         # Start the sandbox
-  tatin ssh        # Connect to it
-  tatin down       # Stop when done
+  tatin up                       # Start the sandbox
+  TATIN_CPUS=8 tatin up          # Start with 8 CPUs
+  TATIN_MEMORY=16384 tatin up    # Start with 16GB RAM
+  tatin ssh                      # Connect to it
+  tatin down                     # Stop when done
 EOF
 }
 
