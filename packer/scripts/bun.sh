@@ -8,6 +8,9 @@ BUN_INSTALL_DIR="$HOME/.bun"
 
 echo "○ Installing bun via curlbash from bun.sh..."
 
+# Skip /etc/profile.d/bun.sh creation - bun is already added to ~/.bashrc
+export BUN_INSTALL_SKIP_PROFILE=1
+
 # Use the official curlbash installer with retry logic for network resilience
 curl --retry 3 --retry-delay 2 --retry-max-time 60 -fsSL https://bun.sh/install | bash
 
@@ -20,11 +23,5 @@ fi
 
 echo "● bun $($BUN_BIN --version) installed at $BUN_BIN"
 
-# Add bun to /etc/profile.d/ for system-wide access (if running as root/sudo context)
-if [ -d /etc/profile.d ] && [ ! -f /etc/profile.d/bun.sh ]; then
-  echo 'export PATH="$HOME/.bun/bin:$PATH"' > /etc/profile.d/bun.sh
-  echo 'export BUN_INSTALL="$HOME/.bun"' >> /etc/profile.d/bun.sh
-  chmod 644 /etc/profile.d/bun.sh
-fi
-
+# Skip /etc/profile.d/bun.sh creation - already handled by BUN_INSTALL_SKIP_PROFILE
 echo "● Bun installation complete"
