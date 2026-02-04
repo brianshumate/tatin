@@ -20,15 +20,6 @@ fi
 
 echo "● bun $($BUN_BIN --version) installed at $BUN_BIN"
 
-# Add bun to PATH in .bashrc for interactive shells
-BASHRC="$HOME/.bashrc"
-if ! grep -q 'bun/bin' "$BASHRC" 2>/dev/null; then
-  echo '' >> "$BASHRC"
-  echo '# Bun (bun.sh) PATH' >> "$BASHRC"
-  echo 'export PATH="$HOME/.bun/bin:$PATH"' >> "$BASHRC"
-  echo 'export BUN_INSTALL="$HOME/.bun"' >> "$BASHRC"
-fi
-
 # Add bun to /etc/profile.d/ for system-wide access (if running as root/sudo context)
 if [ -d /etc/profile.d ] && [ ! -f /etc/profile.d/bun.sh ]; then
   echo 'export PATH="$HOME/.bun/bin:$PATH"' > /etc/profile.d/bun.sh

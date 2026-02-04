@@ -28,8 +28,13 @@ if ! grep -q 'mise completions' "$BASHRC" 2>/dev/null; then
   echo 'eval "$(mise completion bash)"' >> "$BASHRC"
 fi
 
-# Remove redundant bun PATH addition (mise handles this)
-sed -i '/\.bun\/bin/d' "$BASHRC" 2>/dev/null || true
+# Add bun to PATH (installed via curlbash from bun.sh)
+if ! grep -q '\.bun/bin' "$BASHRC" 2>/dev/null; then
+  echo '' >> "$BASHRC"
+  echo '# Bun (bun.sh) PATH' >> "$BASHRC"
+  echo 'export PATH="$HOME/.bun/bin:$PATH"' >> "$BASHRC"
+  echo 'export BUN_INSTALL="$HOME/.bun"' >> "$BASHRC"
+fi
 
 # Add claude alias with --dangerously-skip-permissions flag
 if ! grep -q 'alias claude=' "$BASHRC" 2>/dev/null; then
@@ -49,8 +54,9 @@ echo ""
 echo "✓ Tatin sandbox ready!"
 echo ""
 echo "Development environment:"
-echo "  ○ mise (version manager) - manages all language runtimes"
-echo "  ○ Python, Go, Node.js, Ruby, Bun, Rust (via mise)"
+echo "  ○ mise (version manager) - manages language runtimes"
+echo "  ○ Python, Go, Node.js, Ruby, Rust (via mise)"
+echo "  ○ Bun (via curlbash from bun.sh)"
 echo "  ○ build-essential, git, jq, tmux, zsh, vim"
 echo ""
 echo "AI agent tools:"
