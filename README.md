@@ -194,6 +194,26 @@ config.vm.provider "tart" do |tart|
 end
 ```
 
+#### Environment variable overrides
+
+You can override VM resources using environment variables without editing the `Vagrantfile`:
+
+```shell
+export TATIN_CPUS=8         # Override CPU cores
+export TATIN_MEMORY=16384    # Override RAM in MB
+export TATIN_DISK=50         # Override disk in GB
+
+vagrant up
+```
+
+Or use with the tatin wrapper script:
+
+```shell
+TATIN_CPUS=8 ./scripts/tatin.sh up
+```
+
+Defaults are: 4 CPUs, 8192MB RAM, 20GB disk.
+
 ### Synced folders
 
 The VM only shares the `work/` folder with the host; this folder is the only direct point of contact with the host system from the guest system for safety.
