@@ -14,7 +14,7 @@ echo "○ Installing agent tools in parallel..."
   CLAUDE_SCRIPT=$(mktemp)
   trap 'rm -f "$CLAUDE_SCRIPT"' EXIT
 
-  curl -fsSL "$INSTALL_CLAUDE_URL" -o "$CLAUDE_SCRIPT"
+  curl --retry 3 --retry-delay 2 --retry-max-time 60 -fsSL "$INSTALL_CLAUDE_URL" -o "$CLAUDE_SCRIPT"
 
   if [[ ! -s "$CLAUDE_SCRIPT" ]]; then
     echo "  ✗ Claude Code download failed"
@@ -48,7 +48,7 @@ CLAUDE_PID=$!
   OPENCODE_SCRIPT=$(mktemp)
   trap 'rm -f "$OPENCODE_SCRIPT"' EXIT
 
-  curl -fsSL "$INSTALL_OPENCODE_URL" -o "$OPENCODE_SCRIPT"
+  curl --retry 3 --retry-delay 2 --retry-max-time 60 -fsSL "$INSTALL_OPENCODE_URL" -o "$OPENCODE_SCRIPT"
 
   if [[ ! -s "$OPENCODE_SCRIPT" ]]; then
     echo "  ✗ OpenCode download failed"

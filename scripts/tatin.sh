@@ -54,16 +54,27 @@ print_status() {
 spinner() {
     local pid=$1
     local message="${2:-Working}"
-    local spin='◐◓◑◒'
-    local i=0
+    local spin_chars=("◐" "◓" "◑" "◒")
+    local spin_index=0
+    local delay=0.1
 
-    tput civis # Hide cursor
+    # Hide cursor - suppress errors if terminal doesn't support it
+    tput civis 2>/dev/null || true
+
+    # Cleanup function to ensure cursor is restored
+    cleanup() {
+        tput cnorm 2>/dev/null || true
+        printf "\r"
+    }
+    trap cleanup EXIT
+
     while kill -0 "$pid" 2>/dev/null; do
-        i=$(( (i+1) % 4 ))
-        printf "\r${BLUE}%s${NC} %s..." "${spin:$i:1}" "$message"
-        sleep 0.2
+        printf "\r${BLUE}%s${NC} %s..." "${spin_chars[$((spin_index++ % 4))]}" "$message" > /dev/tty
+        sleep "$delay"
     done
-    tput cnorm # Show cursor
+
+    # Restore cursor
+    tput cnorm 2>/dev/null || true
     printf "\r"
 }
 

@@ -3,23 +3,23 @@
 # https://mise.jdx.dev/configuration.html
 
 [tools]
-# Python - latest stable 3.x
-python = "3"
+# Python - pinned to 3.12 for faster resolution (avoids latest lookup)
+python = "3.12"
 
-# Go - matches previous go_version variable (1.23.x)
-go = "1.23"
+# Go - pinned to 1.23.5 for faster resolution
+go = "1.23.5"
 
-# Node.js - LTS version (matches previous NodeSource setup)
-node = "lts"
+# Node.js - pinned to 22 (current LTS) for faster resolution
+node = "22"
 
-# Ruby - matches previous ruby_version variable (3.3.x)
-ruby = "3.3"
+# Ruby - pinned to 3.3.6 for faster resolution
+ruby = "3.3.6"
 
-# Bun - JavaScript runtime and toolkit
-bun = "latest"
+# Bun - pinned to 1.1.29 for faster resolution
+bun = "1.1.29"
 
-# Rust - systems programming language (new addition)
-rust = "latest"
+# Rust - pinned to 1.84 for faster resolution
+rust = "1.84"
 
 [settings]
 # Automatically install tools when entering a directory with a mise.toml

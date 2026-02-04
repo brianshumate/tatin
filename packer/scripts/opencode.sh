@@ -10,7 +10,7 @@ echo "○ Installing OpenCode..."
 
 # Download installer script (don't pipe directly to bash)
 echo "  ◐ Downloading installer from $INSTALL_URL"
-curl -fsSL "$INSTALL_URL" -o "$INSTALL_SCRIPT"
+curl --retry 3 --retry-delay 2 --retry-max-time 60 -fsSL "$INSTALL_URL" -o "$INSTALL_SCRIPT"
 
 # Basic validation
 if [[ ! -s "$INSTALL_SCRIPT" ]]; then

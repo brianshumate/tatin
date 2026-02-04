@@ -8,8 +8,8 @@ MISE_BIN="$HOME/.local/bin/mise"
 
 echo "○ Installing mise..."
 
-# Use the bash-specific installer which handles both installation and activation
-curl -fsSL https://mise.run/bash | sh
+# Use the bash-specific installer with retry logic for network resilience
+curl --retry 3 --retry-delay 2 --retry-max-time 60 -fsSL https://mise.run/bash | sh
 
 # Verify mise is installed
 if [ ! -x "$MISE_BIN" ]; then

@@ -36,6 +36,10 @@ Vagrant.configure("2") do |config|
   config.ssh.password = "admin"
 
   # Synced folder - single shared point between host and guest for safety
+  # Optimized for VirtioFS with Tart provider
   config.vm.synced_folder ".", "/vagrant", disabled: true
-  config.vm.synced_folder "./work", "/home/admin/work", disabled: false
+  config.vm.synced_folder "./work", "/home/admin/work",
+    type: nil,
+    mount_options: ['dmode=755', 'fmode=644'],
+    rsync__exclude: ['.git/', 'node_modules/', '.cache/', '*.log']
 end
