@@ -12,9 +12,6 @@ go = "1.23.5"
 # Node.js - pinned to 22 (current LTS) for faster resolution
 node = "22"
 
-# Ruby - pinned to 3.3.6 for faster resolution
-ruby = "3.3.6"
-
 # Rust - pinned to 1.84 for faster resolution
 rust = "1.84"
 
