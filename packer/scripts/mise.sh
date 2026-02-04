@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Mise (mise-en-place) provisioning for Tatin
 # Installs mise, configures it, and installs all development tools in parallel
+# Note: Bun is installed separately via curlbash from bun.sh
 # https://mise.jdx.dev/
 set -euo pipefail
 
@@ -32,7 +33,7 @@ fi
 mkdir -p ~/.config/mise
 
 # Copy global mise configuration (provided by Packer file provisioner)
-# This file defines Python, Go, Node.js, Ruby, Bun, and Rust
+# This file defines Python, Go, Node.js, Ruby, and Rust (bun is installed separately)
 if [ -f /tmp/mise.toml ]; then
   cp /tmp/mise.toml ~/.config/mise/config.toml
   echo "○ Mise configuration installed"
@@ -43,7 +44,6 @@ else
   $MISE_BIN use --global go@1.23
   $MISE_BIN use --global node@lts
   $MISE_BIN use --global ruby@3.3
-  $MISE_BIN use --global bun@latest
   $MISE_BIN use --global rust@latest
 fi
 
@@ -68,17 +68,12 @@ GO_PID=$!
 $MISE_BIN install --yes node@lts &
 NODE_PID=$!
 
-# Wait for Node to complete before installing Bun
-wait $NODE_PID
-$MISE_BIN install --yes bun@latest &
-BUN_PID=$!
-
 # Rust can compile independently
 $MISE_BIN install --yes rust@latest &
 RUST_PID=$!
 
 # Wait for all background jobs to complete
-wait $PYTHON_PID $RUBY_PID $GO_PID $BUN_PID $RUST_PID
+wait $PYTHON_PID $RUBY_PID $GO_PID $NODE_PID $RUST_PID
 
 echo ""
 echo "● Mise tools installed:"

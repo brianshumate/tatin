@@ -15,9 +15,6 @@ node = "22"
 # Ruby - pinned to 3.3.6 for faster resolution
 ruby = "3.3.6"
 
-# Bun - pinned to 1.1.29 for faster resolution
-bun = "1.1.29"
-
 # Rust - pinned to 1.84 for faster resolution
 rust = "1.84"
 

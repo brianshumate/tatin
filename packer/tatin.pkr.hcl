@@ -39,7 +39,19 @@ build {
     destination = "/tmp/mise.toml"
   }
 
-  # Mise: Install mise and all development tools (Python, Go, Node, Ruby, Bun, Rust)
+  # Bun: Install bun using curlbash from bun.sh (official method)
+  # This must run before mise.sh (which no longer installs bun) and bun-tools.sh
+  provisioner "shell" {
+    script          = "${path.root}/scripts/bun.sh"
+    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.ssh_username} bash '{{ .Path }}'"
+    environment_vars = [
+      "DEBIAN_FRONTEND=noninteractive",
+      "HOME=/home/${var.ssh_username}"
+    ]
+  }
+
+  # Mise: Install mise and all development tools (Python, Go, Node, Ruby, Rust)
+  # Bun is now installed separately via curlbash from bun.sh
   provisioner "shell" {
     script          = "${path.root}/scripts/mise.sh"
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.ssh_username} bash '{{ .Path }}'"
@@ -61,7 +73,7 @@ build {
   }
 
   # Bun-based tools: Pi + Crush + qmd (parallel installation)
-  # These depend on mise-managed bun and can run in parallel internally
+  # These depend on officially installed bun and can run in parallel internally
   provisioner "shell" {
     script          = "${path.root}/scripts/bun-tools.sh"
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.ssh_username} bash '{{ .Path }}'"
