@@ -15,17 +15,19 @@ if ! grep -q 'TERM=xterm-256color' "$BASHRC" 2>/dev/null; then
   echo 'export TERM=xterm-256color' >> "$BASHRC"
 fi
 
-# Add mise shell activation for global tool access
-if ! grep -q 'mise activate' "$BASHRC" 2>/dev/null; then
-  echo '' >> "$BASHRC"
-  echo '# Mise (mise-en-place) shell integration for global tool access' >> "$BASHRC"
-  echo 'eval "$(~/.local/bin/mise activate bash)"' >> "$BASHRC"
-fi
+# Add mise shell activation for global tool access (if mise is available)
+if [ -x "$HOME/.local/bin/mise" ]; then
+  if ! grep -q 'mise activate' "$BASHRC" 2>/dev/null; then
+    echo '' >> "$BASHRC"
+    echo '# Mise (mise-en-place) shell integration for global tool access' >> "$BASHRC"
+    echo 'eval "$(~/.local/bin/mise activate bash)"' >> "$BASHRC"
+  fi
 
-# Add mise bash completions
-if ! grep -q 'mise completions' "$BASHRC" 2>/dev/null; then
-  echo '# Mise bash completions' >> "$BASHRC"
-  echo 'eval "$(mise completion bash)"' >> "$BASHRC"
+  # Add mise bash completions
+  if ! grep -q 'mise completions' "$BASHRC" 2>/dev/null; then
+    echo '# Mise bash completions' >> "$BASHRC"
+    echo 'eval "$(mise completion bash)"' >> "$BASHRC"
+  fi
 fi
 
 # Add bun to PATH (installed via curlbash from bun.sh)
@@ -54,12 +56,15 @@ echo ""
 echo "✓ Tatin sandbox ready!"
 echo ""
 echo "Development environment:"
-echo "  ○ mise (version manager) - manages language runtimes"
-echo "  ○ Python, Go, Node.js, Ruby, Rust (via mise)"
 echo "  ○ Bun (via curlbash from bun.sh)"
 echo "  ○ build-essential, git, jq, tmux, zsh, vim"
+echo ""
+echo "Languages (install via mise - see MISE_README.md):"
+echo "  ○ Python, Go, Node.js, Ruby, Rust"
 echo ""
 echo "AI agent tools:"
 echo "  ○ Claude Code"
 echo "  ○ OpenCode"
 echo "  ○ Crush"
+echo ""
+echo "See /home/${SSH_USERNAME}/MISE_README.md for mise instructions."

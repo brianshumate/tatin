@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Mise (mise-en-place) provisioning for Tatin
-# Installs mise, configures it, and installs all development tools in parallel
+# Installs mise, configures it, and installs all development tools
 # Note: Bun is installed separately via curlbash from bun.sh
 # https://mise.jdx.dev/
 set -euo pipefail
@@ -10,6 +10,30 @@ export MAKEFLAGS="-j$(nproc)"
 export CARGO_BUILD_JOBS=$(nproc)
 
 MISE_BIN="$HOME/.local/bin/mise"
+
+# Timeout for each mise install command (in seconds)
+INSTALL_TIMEOUT=600
+
+# Function to install a tool with timeout and progress
+mise_tool() {
+    local tool_version="$1"
+
+    echo "  Installing ${tool_version}..."
+
+    # Use timeout command with 10 minute limit
+    if timeout "${INSTALL_TIMEOUT}" "$MISE_BIN" install --yes "${tool_version}" 2>&1; then
+        echo "  ✓ ${tool_version} installed successfully"
+        return 0
+    else
+        local exit_code=$?
+        if [ $exit_code -eq 124 ]; then
+            echo "  ✗ ${tool_version} timed out after ${INSTALL_TIMEOUT}s"
+        else
+            echo "  ✗ ${tool_version} failed with exit code ${exit_code}"
+        fi
+        return $exit_code
+    fi
+}
 
 echo "○ Installing mise..."
 
@@ -50,33 +74,47 @@ else
   $MISE_BIN use --global rust@latest
 fi
 
+# Clean up tracked config directory to prevent "File exists" warnings
+mkdir -p ~/.local/state/mise/tracked-configs
+rm -rf ~/.local/state/mise/tracked-configs/* 2>/dev/null || true
+
 # Trust the global config (allows mise to run without prompts)
 $MISE_BIN trust --all 2>/dev/null || true
 
-# Enable parallel tool installations
+# Use default job settings (sequential within each tool)
 $MISE_BIN settings jobs 0
 
-echo "○ Installing development tools via mise (parallel)..."
-echo "  This may take several minutes..."
+echo "○ Installing development tools via mise (sequential)..."
+echo "  Each tool has a ${INSTALL_TIMEOUT}s timeout..."
 
-# Install tools in parallel for faster builds
-$MISE_BIN install --yes python@3 &
-PYTHON_PID=$!
+# Install tools sequentially with timeout and progress
+set +e  # Don't exit on first error - continue to report all failures
+FAILED_TOOLS=()
 
-# Go and Node can run in parallel
-$MISE_BIN install --yes go@1.23 &
-GO_PID=$!
+for tool_version in "python@3.12" "go@1.23.5" "node@22" "rust@1.84"; do
+    if ! mise_tool ${tool_version}; then
+        FAILED_TOOLS+=("${tool_version}")
+    fi
+done
 
-$MISE_BIN install --yes node@lts &
-NODE_PID=$!
+set -e
 
-# Rust can compile independently
-$MISE_BIN install --yes rust@latest &
-RUST_PID=$!
-
-# Wait for all background jobs to complete
-wait $PYTHON_PID $GO_PID $NODE_PID $RUST_PID
+# Report failures
+if [ ${#FAILED_TOOLS[@]} -gt 0 ]; then
+    echo ""
+    echo "✗ The following tools failed to install:"
+    for tool in "${FAILED_TOOLS[@]}"; do
+        echo "  - ${tool}"
+    done
+    echo ""
+    echo "Continuing with remaining setup..."
+fi
 
 echo ""
 echo "● Mise tools installed:"
 $MISE_BIN ls
+
+# Verify mise setup with doctor
+echo ""
+echo "○ Running mise doctor to verify setup..."
+$MISE_BIN doctor || echo "Warning: mise doctor reported issues"

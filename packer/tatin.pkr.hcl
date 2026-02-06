@@ -33,14 +33,7 @@ build {
     ]
   }
 
-  # Copy mise configuration file to VM
-  provisioner "file" {
-    source      = "${path.root}/files/mise.toml"
-    destination = "/tmp/mise.toml"
-  }
-
   # Bun: Install bun using curlbash from bun.sh (official method)
-  # This must run before mise.sh (which no longer installs bun) and bun-tools.sh
   provisioner "shell" {
     script          = "${path.root}/scripts/bun.sh"
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.ssh_username} bash '{{ .Path }}'"
@@ -50,15 +43,22 @@ build {
     ]
   }
 
-  # Mise: Install mise and all development tools (Python, Go, Node, Ruby, Rust)
-  # Bun is now installed separately via curlbash from bun.sh
-  provisioner "shell" {
-    script          = "${path.root}/scripts/mise.sh"
-    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.ssh_username} bash '{{ .Path }}'"
-    environment_vars = [
-      "DEBIAN_FRONTEND=noninteractive",
-      "HOME=/home/${var.ssh_username}"
-    ]
+  # Write mise README with installation instructions
+  provisioner "file" {
+    content     = file("files/mise-readme.md")
+    destination = "/home/${var.ssh_username}/MISE_README.md"
+  }
+
+  # Copy README.md to admin home directory
+  provisioner "file" {
+    content     = file("files/README.md")
+    destination = "/home/${var.ssh_username}/README.md"
+  }
+
+  # Copy mise.toml to admin home directory
+  provisioner "file" {
+    content     = file("files/mise.toml")
+    destination = "/home/${var.ssh_username}/mise.toml"
   }
 
   # Agent tools: Claude Code + OpenCode (parallel installation)
