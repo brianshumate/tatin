@@ -1,0 +1,51 @@
+# prek configuration for Tatin
+# https://prek.j178.dev/
+# Using built-in hooks for zero-setup, maximum speed
+
+repos:
+  - repo: builtin
+    hooks:
+      # File hygiene
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: end-of-file-fixer
+      - id: fix-byte-order-marker
+      - id: mixed-line-ending
+        args: [--fix=lf]
+
+      # File validation
+      - id: check-json
+      - id: check-toml
+      - id: check-yaml
+      - id: check-xml
+
+      # Security
+      - id: detect-private-key
+
+      # Git safety
+      - id: check-added-large-files
+        args: [--maxkb=1024]
+        # Important for this repo: prevent accidental commit of VM disk images
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: no-commit-to-branch
+        args: [--branch, main, --branch, master]
+
+      # Script validation
+      - id: check-executables-have-shebangs
+        # Ensures shell scripts have proper shebang lines
+
+# Run hooks on both commit and push stages
+default_stages: [pre-commit, pre-push]
+
+# Exclude patterns for files that shouldn't be checked at all
+exclude: |
+  (?x)^(
+    \.vagrant/.*|
+    \.tatin/.*|
+    \.git/.*|
+    \.DS_Store|
+    \.beads/.*|
+    packer/manifest\.json
+  )$
