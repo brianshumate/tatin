@@ -1,0 +1,17 @@
+dictionaries = ["en_us"]
+words = [
+    "Anthropic",
+    "chonky",
+    "mise",
+    "tatin"
+]
+flag_words = [
+    "todo",
+    "fixme",
+]
+ignore_paths = [
+    "**/*.json",
+    ".git/**/*",
+    "target/**/*",
+]
+ignore_patterns = ['\b[LLM]+\b']

@@ -25,12 +25,13 @@ Tatin combines several nice technologies toward the goal of virtual machine base
 ### AI agent tools
 
 - [Pi](https://shittycodingagent.ai/)
-- [Claude Code](https://claude.ai/code) - Anthropic's terminal agent
+- [Claude Code](https://claude.ai/code) - the Anthropic terminal agent app
   - Configured to dangerously skip permissions
-- [OpenCode](https://opencode.ai/) - open source terminal agent
+- [OpenCode](https://opencode.ai/) - open source terminal agent app
   - Example configuration allows all permissions
-- [Crush](https://github.com/charmbracelet/crush) - open source terminal agent
-- Tool configuration examples in `work/` directory
+- [Crush](https://github.com/charmbracelet/crush) - open source terminal agent app
+
+Tatin enables configuration examples for these agent apps in the `work/` directory:
 
 ### Development tools
 
@@ -46,13 +47,17 @@ Tatin combines several nice technologies toward the goal of virtual machine base
 
 ### Base Environment
 
+The sandbox is built with the following environment by default:
+
 - Debian 13
 - 4 CPU cores, 8GB RAM, 20GB disk
-- User **admin** with sudo access
+- User **agent** with password-less sudo access (runtime user)
+- User **admin** used during Packer image build (not available at runtime)
 
 ## Prerequisites
 
-1. Apple Silicon Mac
+1. Apple Silicon Mac with suitable available resources.
+  - You can decrease resources for older Macs. Review the `variables.pkr.hcl` file for related variables.
 
 1. Tart macOS native virtualization installed:
 
@@ -124,7 +129,7 @@ tart list
     vagrant up
     ```
 
-1. Connect to the sandbox.
+1. Connect to the sandbox (logs in as `agent` user automatically).
 
     ```shell
     vagrant ssh
@@ -173,12 +178,13 @@ vagrant status          # Check status
 The Packer build runs these provisioning stages to create the base image:
 
 1. **base-system** installs core packages, build tools, shell utilities
-2. **mise** installs [mise](https://mise.jdx.dev/) and all language runtimes (Python, Go, Node.js, Ruby, Bun, Rust)
-3. **pi** installs the Pi coding agent
-3. **claude-code** installs the Claude Code agent
-4. **opencode** installs the OpenCode agent
-5. **crush** installs the CharmBracelet Crush agent
-6. **finalize** - Shell configuration, cleanup
+2. **create-agent-user** creates the `agent` user with sudo privileges
+3. **bun** installs Bun runtime (as agent user)
+4. **agent-tools** installs Claude Code and OpenCode (as agent user)
+5. **bun-tools** installs Pi, Crush, and qmd (as agent user)
+6. **finalize** configures shell environment and cleans up (as agent user)
+
+All provisioning runs as the `admin` user initially, then creates and switches to the `agent` user for tool installation.
 
 ## Configuration
 
@@ -216,19 +222,47 @@ Defaults are: 4 CPUs, 8192MB RAM, 20GB disk.
 
 ### Synced folders
 
+```plaintext
+┌─────────────────────────────────────────────────────────────────┐
+│  Tart VM Host (macOS)                                           │
+│  ┌─────────────────────────────────────────────────────────┐    │
+│  │  ./work/                                                │    │
+│  │  ┌─────────────────────────────────────────────────┐    │    │
+│  │  │  project files                                  │    │    │
+│  │  └─────────────────────────────────────────────────┘    │    │
+│  └─────────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              │  Vagrant synced_folder
+                              │  (Tatin VM)
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  Tatin VM (Debian 13)                                           │
+│  ┌─────────────────────────────────────────────────────────┐    │
+│  │  /home/agent/work/                                      │    │
+│  │  ┌─────────────────────────────────────────────────┐    │    │
+│  │  │  project files                                  │    │    │
+│  │  └─────────────────────────────────────────────────┘    │    │
+│  └─────────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────────┘
+```
+
 The VM only shares the `work/` folder with the host; this folder is the only direct point of contact with the host system from the guest system for safety.
 
 ```ruby
-config.vm.synced_folder "./work", "/home/admin/work"
+config.vm.synced_folder "./work", "/home/agent/work"
 ```
 
-Place files in `./work` on the host to access them at `/home/admin/work` in the VM.
+Place files in `./work` on the host to access them at `/home/agent/work` in the VM.
 
 ### Secure shell credentials
 
-Default credentials (Debian image defaults):
-- Username: `admin`
-- Password: `admin`
+Default credentials:
+
+- Username: `agent`
+- Password: `xmLGFhZqGlXvB2lJ/s+J8g=`
+
+The VM also has a sudoers rule allowing password-less sudo for the agent user.
 
 ## Using AI agent tools
 

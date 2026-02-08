@@ -13,13 +13,16 @@ sudo -E apt-get install -y -qq \
   build-essential \
   ca-certificates \
   curl \
+  eza \
   fd-find \
+  fzf \
   git \
   gnupg \
   jq \
   locales-all \
   lsb-release \
   ripgrep \
+  starship \
   unzip \
   wget
 

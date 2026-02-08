@@ -1,6 +1,4 @@
-# Tatin Global Mise Configuration
-# This file defines the development tools installed in the Tatin sandbox
-# https://mise.jdx.dev/configuration.html
+# Tatin Global mise Configuration
 
 [tools]
 # Python - pinned to 3.12 for faster resolution (avoids latest lookup)
@@ -9,11 +7,14 @@ python = "3.12"
 # Go - pinned to 1.23.5 for faster resolution
 go = "1.23.5"
 
-# Node.js - pinned to 22 (current LTS) for faster resolution
-node = "22"
+# Node.js - pinned to 24
+node = "24"
 
 # Rust - pinned to 1.84 for faster resolution
 rust = "1.84"
+
+# Bun - pinned to 1.2 for faster resolution
+bun = "1.2"
 
 [settings]
 # Automatically install tools when entering a directory with a mise.toml

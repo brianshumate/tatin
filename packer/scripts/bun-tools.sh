@@ -1,23 +1,33 @@
 #!/usr/bin/env bash
 # Bun-based tools provisioning for Tatin (Pi + Crush + qmd)
-# Uses officially installed bun from bun.sh (curlbash method), not mise
+# Uses mise-installed bun
+# Note: Tools are installed globally via mise's bun
 set -euo pipefail
-
-BUN_BIN="$HOME/.bun/bin/bun"
 
 echo "○ Installing bun-based tools in parallel..."
 
-# Ensure bun is in PATH
-export PATH="$HOME/.bun/bin:$PATH"
+# Ensure mise is activated so bun is available
+if command -v mise &> /dev/null; then
+  eval "$(mise activate bash)"
+fi
+
+# Verify bun is available
+if ! command -v bun &> /dev/null; then
+  echo "Error: bun not found - mise should have installed it"
+  exit 1
+fi
+
+BUN_BIN="$(command -v bun)"
+echo "  Using bun from mise: $BUN_BIN"
 
 # Install Pi in background
 (
   echo "  ◐ Installing Pi..."
   $BUN_BIN install -g @mariozechner/pi-coding-agent 2>/dev/null
-  if which pi &> /dev/null; then
+  if command -v pi &> /dev/null; then
     echo "  ● Pi ready"
   else
-    echo "  ● Pi installed (available after shell restart)"
+    echo "  ● Pi installed"
   fi
 ) &
 PI_PID=$!
@@ -26,10 +36,10 @@ PI_PID=$!
 (
   echo "  ◐ Installing Crush..."
   $BUN_BIN install -g @charmland/crush 2>/dev/null
-  if which crush &> /dev/null; then
+  if command -v crush &> /dev/null; then
     echo "  ● Crush ready"
   else
-    echo "  ● Crush installed (available after shell restart)"
+    echo "  ● Crush installed"
   fi
 ) &
 CRUSH_PID=$!
@@ -38,10 +48,10 @@ CRUSH_PID=$!
 (
   echo "  ◐ Installing qmd..."
   $BUN_BIN install -g https://github.com/tobi/qmd 2>/dev/null
-  if which qmd &> /dev/null; then
+  if command -v qmd &> /dev/null; then
     echo "  ● qmd ready"
   else
-    echo "  ● qmd installed (available after shell restart)"
+    echo "  ● qmd installed"
   fi
 ) &
 QMD_PID=$!

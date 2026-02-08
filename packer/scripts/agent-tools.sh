@@ -14,7 +14,11 @@ echo "○ Installing agent tools in parallel..."
   CLAUDE_SCRIPT=$(mktemp)
   trap 'rm -f "$CLAUDE_SCRIPT"' EXIT
 
-  curl --retry 3 --retry-delay 2 --retry-max-time 60 -fsSL "$INSTALL_CLAUDE_URL" -o "$CLAUDE_SCRIPT"
+  curl \
+    --retry 3 \
+    --retry-delay 2 \
+    --retry-max-time 60 \
+    -fsSL "$INSTALL_CLAUDE_URL" -o "$CLAUDE_SCRIPT"
 
   if [[ ! -s "$CLAUDE_SCRIPT" ]]; then
     echo "  ✗ Claude Code download failed"
@@ -29,15 +33,10 @@ echo "○ Installing agent tools in parallel..."
   # Add to PATH
   export PATH="$HOME/.claude/bin:$PATH"
 
-  # Ensure PATH is in bashrc
-  if ! grep -q '.claude/bin' ~/.bashrc 2>/dev/null; then
-    echo 'export PATH="$HOME/.claude/bin:$PATH"' >> ~/.bashrc
-  fi
-
   if command -v claude &> /dev/null; then
     echo "  ● Claude Code ready"
   else
-    echo "  ● Claude Code installed (available after shell restart)"
+    echo "  ● Claude Code installed"
   fi
 ) &
 CLAUDE_PID=$!
@@ -48,7 +47,11 @@ CLAUDE_PID=$!
   OPENCODE_SCRIPT=$(mktemp)
   trap 'rm -f "$OPENCODE_SCRIPT"' EXIT
 
-  curl --retry 3 --retry-delay 2 --retry-max-time 60 -fsSL "$INSTALL_OPENCODE_URL" -o "$OPENCODE_SCRIPT"
+  curl \
+    --retry 3 \
+    --retry-delay 2 \
+    --retry-max-time 60 \
+    -fsSL "$INSTALL_OPENCODE_URL" -o "$OPENCODE_SCRIPT"
 
   if [[ ! -s "$OPENCODE_SCRIPT" ]]; then
     echo "  ✗ OpenCode download failed"

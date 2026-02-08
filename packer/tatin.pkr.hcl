@@ -1,5 +1,11 @@
-# Tatin: LLM Agent Sandbox
-# Packer template for building Tart VM image with pre-installed development tools
+# Tatin: LLM agent sandbox
+#
+# Packer template for building Tart VM image with languages and LLM agent tools
+#
+# User setup:
+# - 'admin' user for initial SSH and base-system provisioning
+# - 'agent' user with sudo capabilities for runtime and all tool installation
+# - Vagrant uses 'agent' user for SSH after image build
 
 packer {
   required_plugins {
@@ -19,13 +25,13 @@ source "tart-cli" "tatin" {
   headless       = true
   ssh_username   = var.ssh_username
   ssh_password   = var.ssh_password
-  ssh_timeout    = "120s"
+  ssh_timeout    = "20s"
 }
 
 build {
   sources = ["source.tart-cli.tatin"]
 
-  # Base system packages (build dependencies for mise-compiled languages)
+  # Base system packages
   provisioner "shell" {
     script = "${path.root}/scripts/base-system.sh"
     environment_vars = [
@@ -33,62 +39,114 @@ build {
     ]
   }
 
-  # Bun: Install bun using curlbash from bun.sh (official method)
+  # Create agent user with sudo capabilities
   provisioner "shell" {
-    script          = "${path.root}/scripts/bun.sh"
-    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.ssh_username} bash '{{ .Path }}'"
+    script = "${path.root}/scripts/create-agent-user.sh"
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
-      "HOME=/home/${var.ssh_username}"
+      "AGENT_USERNAME=${var.agent_username}",
+      "AGENT_PASSWORD=${var.agent_password}"
     ]
   }
 
-  # Write mise README with installation instructions
+  # Upload .bashrc first - it must be in place before any user scripts run
   provisioner "file" {
-    content     = file("files/mise-readme.md")
-    destination = "/home/${var.ssh_username}/MISE_README.md"
+    content     = file("files/.bashrc")
+    destination = "/tmp/.bashrc"
   }
 
-  # Copy README.md to admin home directory
+  # Move .bashrc to agent home so it's available for all agent user scripts
+  provisioner "shell" {
+    inline = [
+      "sudo mv /tmp/.bashrc /home/${var.agent_username}/.bashrc",
+      "sudo chown ${var.agent_username}:${var.agent_username} /home/${var.agent_username}/.bashrc",
+      "sudo chmod 644 /home/${var.agent_username}/.bashrc"
+    ]
+  }
+
+  # Upload files to /tmp, then move to agent home
+  provisioner "file" {
+    content     = file("files/MISE_README.md")
+    destination = "/tmp/MISE_README.md"
+  }
+
   provisioner "file" {
     content     = file("files/README.md")
-    destination = "/home/${var.ssh_username}/README.md"
+    destination = "/tmp/README.md"
   }
 
-  # Copy mise.toml to admin home directory
   provisioner "file" {
     content     = file("files/mise.toml")
-    destination = "/home/${var.ssh_username}/mise.toml"
+    destination = "/tmp/mise.toml"
   }
 
-  # Agent tools: Claude Code + OpenCode (parallel installation)
-  # These only depend on curl (installed by base-system.sh) and can run in parallel internally
+  # Fix permissions on uploaded files so agent user can read them
   provisioner "shell" {
-    script          = "${path.root}/scripts/agent-tools.sh"
-    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.ssh_username} bash '{{ .Path }}'"
-    environment_vars = [
-      "DEBIAN_FRONTEND=noninteractive",
-      "HOME=/home/${var.ssh_username}"
+    inline = [
+      "chmod 644 /tmp/mise.toml /tmp/MISE_README.md /tmp/README.md"
     ]
   }
 
-  # Bun-based tools: Pi + Crush + qmd (parallel installation)
-  # These depend on officially installed bun and can run in parallel internally
+  # mise: Install mise, then use it to install languages and tools
   provisioner "shell" {
-    script          = "${path.root}/scripts/bun-tools.sh"
-    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.ssh_username} bash '{{ .Path }}'"
+    script          = "${path.root}/scripts/mise.sh"
+    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.agent_username} bash '{{ .Path }}'"
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
-      "HOME=/home/${var.ssh_username}"
+      "HOME=/home/${var.agent_username}"
+    ]
+  }
+
+  # Move remaining files from /tmp to agent home with correct ownership
+  provisioner "shell" {
+    inline = [
+      "sudo mv /tmp/MISE_README.md /home/${var.agent_username}/MISE_README.md",
+      "sudo mv /tmp/README.md /home/${var.agent_username}/README.md",
+      "sudo mv /tmp/mise.toml /home/${var.agent_username}/mise.toml",
+      "sudo chown ${var.agent_username}:${var.agent_username} /home/${var.agent_username}/MISE_README.md",
+      "sudo chown ${var.agent_username}:${var.agent_username} /home/${var.agent_username}/README.md",
+      "sudo chown ${var.agent_username}:${var.agent_username} /home/${var.agent_username}/mise.toml",
+      "sudo -u ${var.agent_username} mise trust /home/${var.agent_username}/mise.toml"
+    ]
+  }
+
+  # Set message of the day from README.md
+  provisioner "shell" {
+    inline = [
+      "sudo cp /home/${var.agent_username}/README.md /etc/motd",
+      "sudo chmod 644 /etc/motd"
+    ]
+  }
+
+  # Agent tools: Claude Code + OpenCode
+  # These depend on just curl and can install in parallel internally
+  provisioner "shell" {
+    script          = "${path.root}/scripts/agent-tools.sh"
+    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.agent_username} bash '{{ .Path }}'"
+    environment_vars = [
+      "DEBIAN_FRONTEND=noninteractive",
+      "HOME=/home/${var.agent_username}"
+    ]
+  }
+
+  # Bun-based tools: Pi + Crush + qmd
+  # These depend on bun and can install in parallel internally
+  provisioner "shell" {
+    script          = "${path.root}/scripts/bun-tools.sh"
+    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.agent_username} bash '{{ .Path }}'"
+    environment_vars = [
+      "DEBIAN_FRONTEND=noninteractive",
+      "HOME=/home/${var.agent_username}"
     ]
   }
 
   # Final cleanup and configuration
   provisioner "shell" {
-    script = "${path.root}/scripts/finalize.sh"
+    script          = "${path.root}/scripts/finalize.sh"
+    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -u ${var.agent_username} bash '{{ .Path }}'"
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
-      "SSH_USERNAME=${var.ssh_username}"
+      "HOME=/home/${var.agent_username}"
     ]
   }
 

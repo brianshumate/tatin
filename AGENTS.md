@@ -6,8 +6,9 @@
 
 **Tatin** = LLM agent sandbox
 macOS **Tart** VM + **Vagrant** (`vagrant-tart`)
-Provisions **Debian 13 dev env** w/ sudo.
+Provisions **Debian 13 dev env**.
 
+**User:** `agent` (sudo privileges, no password required)
 **Installed:** build-essential, git, jq, bun, python3, golang, tmux, zsh
 **Agent tools:** Claude Code, Crush, OpenCode
 

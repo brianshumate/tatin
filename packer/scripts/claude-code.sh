@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Claude Code provisioning for Tatin (runs as admin user)
+# Claude Code provisioning for Tatin (runs as agent user)
 set -euo pipefail
 
 INSTALL_URL="https://claude.ai/install.sh"
@@ -10,7 +10,11 @@ echo "○ Installing Claude Code..."
 
 # Download installer script (don't pipe directly to bash)
 echo "  ◐ Downloading installer from $INSTALL_URL"
-curl --retry 3 --retry-delay 2 --retry-max-time 60 -fsSL "$INSTALL_URL" -o "$INSTALL_SCRIPT"
+curl \
+    --retry 3 \
+    --retry-delay 2 \
+    --retry-max-time 60 \
+    -fsSL "$INSTALL_URL" -o "$INSTALL_SCRIPT"
 
 # Basic validation
 if [[ ! -s "$INSTALL_SCRIPT" ]]; then
@@ -27,11 +31,6 @@ bash "$INSTALL_SCRIPT"
 
 # Add to PATH
 export PATH="$HOME/.claude/bin:$PATH"
-
-# Ensure PATH is in bashrc
-if ! grep -q '.claude/bin' ~/.bashrc 2>/dev/null; then
-  echo 'export PATH="$HOME/.claude/bin:$PATH"' >> ~/.bashrc
-fi
 
 if command -v claude &> /dev/null; then
   echo "● Claude Code ready"

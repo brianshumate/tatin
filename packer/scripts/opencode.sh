@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# OpenCode provisioning for Tatin (runs as admin user)
+# OpenCode provisioning for Tatin (runs as agent user)
 set -euo pipefail
 
 INSTALL_URL="https://opencode.ai/install"
@@ -10,7 +10,11 @@ echo "○ Installing OpenCode..."
 
 # Download installer script (don't pipe directly to bash)
 echo "  ◐ Downloading installer from $INSTALL_URL"
-curl --retry 3 --retry-delay 2 --retry-max-time 60 -fsSL "$INSTALL_URL" -o "$INSTALL_SCRIPT"
+curl \
+    --retry 3 \
+    --retry-delay 2 \
+    --retry-max-time 60 \
+    -fsSL "$INSTALL_URL" -o "$INSTALL_SCRIPT"
 
 # Basic validation
 if [[ ! -s "$INSTALL_SCRIPT" ]]; then

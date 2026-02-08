@@ -1,27 +1,30 @@
 #!/usr/bin/env bash
-# Bun installation for Tatin
-# Installs bun using curlbash from bun.sh (official method)
-# https://bun.sh/docs/installation
+# Bun verification and setup for Tatin
+# Bun is now installed via mise, this script verifies it's available
+# and sets up the environment for bun-based tools
+# https://bun.sh/
 set -euo pipefail
 
-BUN_INSTALL_DIR="$HOME/.bun"
+echo "○ Verifying bun installation via mise..."
 
-echo "○ Installing bun via curlbash from bun.sh..."
-
-# Skip /etc/profile.d/bun.sh creation - bun is already added to ~/.bashrc
-export BUN_INSTALL_SKIP_PROFILE=1
-
-# Use the official curlbash installer with retry logic for network resilience
-curl --retry 3 --retry-delay 2 --retry-max-time 60 -fsSL https://bun.sh/install | bash
-
-# Verify bun is installed
-BUN_BIN="$BUN_INSTALL_DIR/bin/bun"
-if [ ! -x "$BUN_BIN" ]; then
-  echo "Error: bun installation failed"
+# Ensure mise is activated so bun is available
+if command -v mise &> /dev/null; then
+  eval "$(mise activate bash)"
+else
+  echo "Error: mise not found"
   exit 1
 fi
 
-echo "● bun $($BUN_BIN --version) installed at $BUN_BIN"
+# Verify bun is installed and available
+if ! command -v bun &> /dev/null; then
+  echo "Error: bun not found - mise should have installed it"
+  exit 1
+fi
 
-# Skip /etc/profile.d/bun.sh creation - already handled by BUN_INSTALL_SKIP_PROFILE
-echo "● Bun installation complete"
+echo "● bun $(bun --version) is available via mise"
+
+# Set up bun environment for global installations
+export BUN_INSTALL="$HOME/.local/share/bun"
+mkdir -p "$BUN_INSTALL"
+
+echo "● Bun environment configured"
