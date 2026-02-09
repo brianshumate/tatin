@@ -100,13 +100,14 @@ build {
   # Move remaining files from /tmp to agent home with correct ownership
   provisioner "shell" {
     inline = [
+      "sudo mkdir -p /home/${var.agent_username}/work",
       "sudo mv /tmp/MISE_README.md /home/${var.agent_username}/MISE_README.md",
       "sudo mv /tmp/README.md /home/${var.agent_username}/README.md",
-      "sudo mv /tmp/mise.toml /home/${var.agent_username}/mise.toml",
+      "sudo mv /tmp/mise.toml /home/${var.agent_username}/work/mise.toml",
+      "sudo chown -R ${var.agent_username}:${var.agent_username} /home/${var.agent_username}/work",
       "sudo chown ${var.agent_username}:${var.agent_username} /home/${var.agent_username}/MISE_README.md",
       "sudo chown ${var.agent_username}:${var.agent_username} /home/${var.agent_username}/README.md",
-      "sudo chown ${var.agent_username}:${var.agent_username} /home/${var.agent_username}/mise.toml",
-      "sudo -u ${var.agent_username} mise trust /home/${var.agent_username}/mise.toml"
+      "sudo -u ${var.agent_username} mise trust /home/${var.agent_username}/work/mise.toml"
     ]
   }
 

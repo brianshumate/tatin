@@ -1,9 +1,7 @@
 Tatin
 
 Welcome to the sandbox.
-
 You are logged in as user **agent** with sudo capability.
-
 The sandbox has these language and tool versions installed:
 
 ┌──────────────────┬───────────┐
@@ -22,5 +20,5 @@ do all your work in that folder so that it persists when the VM is stopped.
 
 There is an example AGENTS.md file in the work folder with some ideas in it.
 
-Install programming languages with or tools with mise.
+Install programming languages or tools with mise.
 Refer to /home/agent/MISE_README.md for more details.

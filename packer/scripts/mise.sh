@@ -83,6 +83,11 @@ else
   $MISE_BIN use --global bun@1.2
 fi
 
+# Create work directory for mise.toml placement
+if [ ! -d ~/work ]; then
+  mkdir -p ~/work
+fi
+
 # Clean up tracked config directory to prevent "File exists" warnings
 mkdir -p ~/.local/state/mise/tracked-configs
 rm -rf ~/.local/state/mise/tracked-configs/* 2>/dev/null || true
