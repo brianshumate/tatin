@@ -18,12 +18,15 @@ if ! command -v bun &> /dev/null; then
 fi
 
 BUN_BIN="$(command -v bun)"
+NPM_BIN="$(command -v npm)"
 echo "  Using bun from mise: $BUN_BIN"
+echo "  Using npm from mise: $NPM_BIN"
 
 # Install Pi in background
 (
   echo "  ◐ Installing Pi..."
-  $BUN_BIN install -g @mariozechner/pi-coding-agent 2>/dev/null
+  # $BUN_BIN install -g @mariozechner/pi-coding-agent 2>/dev/null
+  $NPM_BIN install -g @mariozechner/pi-coding-agent 2>/dev/null
   if command -v pi &> /dev/null; then
     echo "  ● Pi ready"
   else

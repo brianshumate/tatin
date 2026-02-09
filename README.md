@@ -87,7 +87,7 @@ The sandbox is built with the following environment by default:
 ### Build the base image
 
 > [!NOTE]
-> This is a long-running process that takes 10-15 minutes.
+> This is a long-running process that takes 2-3 minutes.
 
 In addition to covering the prerequisites, you must build the base VM image with Packer before proceeding.
 
