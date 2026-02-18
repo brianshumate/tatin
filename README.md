@@ -351,6 +351,10 @@ vagrant provision
 tart list
 ```
 
+## AI Use Disclaimer
+
+This codebase has been built with the support of coding agents.
+
 ## License
 
 Mozilla Public License 2.0
